@@ -26,9 +26,7 @@
     "test",
     "result",
     "merge",
-    "merger",
-    "combine",
-    "combiner"
+    "combine"
   ],
   "author": "Hovhannes Babayan",
   "license": "MIT",
