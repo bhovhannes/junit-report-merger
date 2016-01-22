@@ -1,0 +1,44 @@
+{
+  "name": "junit-report-merger",
+  "version": "0.0.0",
+  "description": "Merges multiple JUnit XML reports into one.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "src/**/*.js"
+  ],
+  "scripts": {
+    "test": "./node_modules/.bin/_mocha -- test/**/*.spec.js",
+    "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/**/*.spec.js"
+  },
+  "dependencies": {
+    "async": "^1.5.2",
+    "xmldom": "^0.1.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhovhannes/junit-report-merger.git"
+  },
+  "keywords": [
+    "junit",
+    "xml",
+    "report",
+    "test",
+    "result",
+    "merge",
+    "merger",
+    "combine",
+    "combiner"
+  ],
+  "author": "Hovhannes Babayan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bhovhannes/junit-report-merger/issues"
+  },
+  "homepage": "https://github.com/bhovhannes/junit-report-merger#readme",
+  "devDependencies": {
+    "chai": "~3.4.1",
+    "istanbul": "~0.4.2",
+    "mocha": "~2.3.4"
+  }
+}
