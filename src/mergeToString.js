@@ -22,7 +22,7 @@ function mergeToString(srcStrings, options) {
         errors = 0,
         tests = 0;
 
-    var docIteratorFn = function _docIteratorFn(testSuiteNode) {
+    function docIteratorFn(testSuiteNode) {
         var testsAttr = testSuiteNode.getAttribute('tests');
         if (testsAttr) {
             tests += parseInt(testsAttr, 10);
@@ -38,7 +38,7 @@ function mergeToString(srcStrings, options) {
             errors += parseInt(errorsAttr, 10);
         }
         combinedTestSuitesNode.appendChild(testSuiteNode);
-    };
+    }
 
     srcStrings.forEach(function(srcString) {
         var doc = new DOMParser().parseFromString(srcString, 'text/xml');

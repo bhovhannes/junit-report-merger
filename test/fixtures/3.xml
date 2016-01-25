@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Jasmine Tests" time="0.030000000000000006" tests="2" failures="0">
+    <testsuite name="pass1" timestamp="2016-01-22T18:25:02" tests="1" failures="0" time="0.001">
+        <testcase name="testcase3.1" time="0.001" classname="should pass 1">
+        </testcase>
+    </testsuite>
+    <testsuite name="pass2" timestamp="2016-01-22T18:25:02" tests="1" failures="0" time="0.001">
+        <testcase name="testcase3.2" time="0.001" classname="should pass 2">
+        </testcase>
+    </testsuite>
+</testsuites>

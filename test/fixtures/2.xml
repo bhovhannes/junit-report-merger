@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.030000000000000006" tests="2" failures="1">
+    <testsuite name="FAIL" timestamp="2016-01-22T18:25:02" tests="2" failures="1" time="0.001">
+        <testcase name="testcase2.1" time="0.001" classname="should fail on client">
+        </testcase>
+        <testcase name="testcase2.2" time="0" classname="should fail on server">
+            <failure><![CDATA[ReferenceError: window is not defined
+                at Context.<anonymous> (src/fail.spec.js:14:21)]]></failure>
+        </testcase>
+    </testsuite>
+</testsuites>
