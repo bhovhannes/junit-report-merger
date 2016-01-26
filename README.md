@@ -15,30 +15,48 @@ This can be useful when you have multiple test runners in your test pipeline but
 
 Package exports a single object with the following methods.
 
-#### `mergeFiles(destFilePath:String, srcFilePaths:String, options:Object, cb:Function)`
+<dl>
+<dt><a href="#mergeFiles">mergeFiles(destFilePath, srcFilePaths, [options], cb)</a></dt>
+<dd><p>Reads multiple files, merges their contents and write into the given file.</p>
+</dd>
+<dt><a href="#mergeStreams">mergeStreams(destStream, srcStreams, [options], cb)</a></dt>
+<dd><p>Reads multiple streams, merges their contents and write into the given stream.</p>
+</dd>
+<dt><a href="#mergeToString">mergeToString(srcStrings, [options])</a> ⇒ <code>String</code></dt>
+<dd><p>Merges contents of given XML strings and returns resulting XML string.</p>
+</dd>
+</dl>
 
+<a name="mergeFiles"></a>
+## mergeFiles(destFilePath, srcFilePaths, [options], cb)
 Reads multiple files, merges their contents and write into the given file.
-+ `destFilePath`_{String}_ - Where the output should be stored. Denotes a path to file. If file already exists, it will be overwritten.
-+ `srcFilePaths`_{String[]}_ - Paths to the files which should be merged.
-+ `options`_{Object}_ - Optional. Currently unused.
-+ `cb`_{Function}_ - Callback function which will be called at completion. Will receive error as first argument if any.
 
+| Param | Type | Description |
+| --- | --- | --- |
+| destFilePath | <code>String</code> | Where the output should be stored. Denotes a path to file. If file already exists, it will be overwritten. |
+| srcFilePaths | <code>Array.&lt;String&gt;</code> | Paths to the files which should be merged. |
+| [options] | <code>Object</code> | Merge options. Currently unused. |
+| cb | <code>function</code> | Callback function which will be called at completion. Will receive error as first argument if any. |
 
-#### `mergeStreams(destStream:WriteStream, srcStreams:ReadStream[], options:Object, cb:Function)`
-
+<a name="mergeStreams"></a>
+## mergeStreams(destStream, srcStreams, [options], cb)
 Reads multiple streams, merges their contents and write into the given stream.
-+ `destStream`_{WriteStream}_ - A stream which will be used to write the merge result.
-+ `srcStreams`_{ReadStream[]}_ - Streams which will be used to read data from.
-+ `options`_{Object}_ - Optional. Currently unused.
-+ `cb`_{Function}_ - Callback function which will be called at completion. Will receive error as first argument if any.
 
+| Param | Type | Description |
+| --- | --- | --- |
+| destStream | <code>WriteStream</code> | A stream which will be used to write the merge result. |
+| srcStreams | <code>Array.&lt;ReadStream&gt;</code> | Streams which will be used to read data from. |
+| [options] | <code>Object</code> | Merge options. Currently unused. |
+| cb | <code>function</code> | Callback function which will be called at completion. Will receive error as first argument if any. |
 
-#### `mergeToString(srcStrings:String[], options:Object):String`
-
+<a name="mergeToString"></a>
+## mergeToString(srcStrings, [options]) ⇒ <code>String</code>
 Merges contents of given XML strings and returns resulting XML string.
-+ `srcStrings`_{String[]}_ - Array of strings to merge together.
-+ `options`_{Object}_ - Optional. Currently unused.
-+ Returns string containing merge result.
+
+| Param | Type | Description |
+| --- | --- | --- |
+| srcStrings | <code>Array.&lt;String&gt;</code> | Array of strings to merge together. |
+| [options] | <code>Object</code> | Merge options. Currently unused. |
 
 
 ## License
