@@ -36,7 +36,7 @@
   "homepage": "https://github.com/bhovhannes/junit-report-merger#readme",
   "devDependencies": {
     "async": "^1.5.2",
-    "chai": "~3.4.1",
+    "chai": "~3.5.0",
     "istanbul": "~0.4.2",
     "mocha": "~2.4.4"
   }
