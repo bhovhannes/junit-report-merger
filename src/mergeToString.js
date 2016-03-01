@@ -42,7 +42,7 @@ function mergeToString(srcStrings, options) {
 
     srcStrings.forEach(function(srcString) {
         var doc = new DOMParser().parseFromString(srcString, 'text/xml');
-        var nodes = doc.documentElement.getElementsByTagName('testsuite'),
+        var nodes = doc.getElementsByTagName('testsuite'),
             nodeCount = nodes.length;
 
         for(var i=0; i<nodeCount; ++i) {
