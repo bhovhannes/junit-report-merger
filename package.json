@@ -12,7 +12,7 @@
     "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/**/*.spec.js"
   },
   "dependencies": {
-    "async": "^1.5.2",
+    "async": "^2.0.1",
     "xmldom": "^0.1.21"
   },
   "repository": {
