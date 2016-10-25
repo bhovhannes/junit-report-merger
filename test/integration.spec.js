@@ -56,4 +56,17 @@ describe('integration tests', function() {
             done
         );
     });
+
+    it('should support optional options', function (done) {
+        JUnitReportMerger.mergeFiles(
+            fixturePaths.output,
+            fixturePaths.inputs,
+            function () {
+                fs.readFile(fixturePaths.output, function (err, data) {
+                  chai.expect(data).to.exist;
+                  done();
+                });
+            }
+        )
+    });
 });
