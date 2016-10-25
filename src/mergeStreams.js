@@ -14,6 +14,8 @@ var mergeToString = require('./mergeToString');
  * @param {Function} cb   Callback function which will be called at completion. Will receive error as first argument if any.
  */
 function mergeStreams(destStream, srcStreams, options, cb) {
+    cb = cb || options;
+
     _async.waterfall(
         [
             _async.apply(_async.map,
