@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "async": "^2.0.1",
+    "mkdirp": "^0.5.1",
     "xmldom": "^0.1.21"
   },
   "repository": {

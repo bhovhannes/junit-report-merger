@@ -4,6 +4,8 @@
  */
 
 var fs = require('fs');
+var path = require('path');
+var mkdirp = require('mkdirp');
 var mergeStreams = require('./mergeStreams');
 
 /**
@@ -14,19 +16,23 @@ var mergeStreams = require('./mergeStreams');
  * @param {Function} cb   Callback function which will be called at completion. Will receive error as first argument if any.
  */
 function mergeFiles(destFilePath, srcFilePaths, options, cb) {
-    var srcStreams = srcFilePaths.map(function (srcFilePath) {
-        return fs.createReadStream(srcFilePath, {
-            flags: 'r',
-            encoding: 'utf8',
+    var destDir = path.dirname(path.resolve(destFilePath));
+
+    mkdirp(destDir, function() {
+        var srcStreams = srcFilePaths.map(function (srcFilePath) {
+            return fs.createReadStream(srcFilePath, {
+                flags: 'r',
+                encoding: 'utf8',
+                autoClose: true
+            });
+        });
+        var destStream = fs.createWriteStream(destFilePath, {
+            flags: 'w',
+            defaultEncoding: 'utf8',
             autoClose: true
         });
+        mergeStreams(destStream, srcStreams, options, cb);
     });
-    var destStream = fs.createWriteStream(destFilePath, {
-        flags: 'w',
-        defaultEncoding: 'utf8',
-        autoClose: true
-    });
-    mergeStreams(destStream, srcStreams, options, cb);
 }
 
 module.exports = mergeFiles;

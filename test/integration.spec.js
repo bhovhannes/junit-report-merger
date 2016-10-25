@@ -56,4 +56,9 @@ describe('integration tests', function() {
             done
         );
     });
+
+    it('should create subdirs if they don\'t exist', function (done) {
+        fixturePaths.output = path.join(__dirname, 'fixtures', 'foo', 'bar', 'output.xml');
+        JUnitReportMerger.mergeFiles(fixturePaths.output, fixturePaths.inputs, {}, done);
+    });
 });
