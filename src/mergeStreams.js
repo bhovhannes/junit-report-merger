@@ -33,8 +33,7 @@ function mergeStreams(destStream, srcStreams, options, cb) {
             function (srcStrings, cb) {
                 var destString = mergeToString(srcStrings, options);
                 destStream.on('error', cb);
-                destStream.write(destString, 'utf8');
-                cb();
+                destStream.write(destString, 'utf8', cb);
             }
         ],
         cb
