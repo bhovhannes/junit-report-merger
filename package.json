@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "async": "^3.0.0",
-    "xmldom": "^0.1.21"
+    "xmldom": "^0.2.0"
   },
   "repository": {
     "type": "git",
