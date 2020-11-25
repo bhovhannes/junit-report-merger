@@ -14,8 +14,7 @@
   ],
   "scripts": {
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,css,md,yml}'",
-    "test": "jest --coverage",
-    "cov": "istanbul cover ./node_modules/.bin/_mocha -- test/**/*.spec.js"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "fast-glob": "3.2.4",
