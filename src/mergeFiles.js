@@ -11,7 +11,7 @@ const { mergeStreams } = require("./mergeStreams.js");
  * @param {Function} [cb]   Callback function which will be called at completion. Will receive error as first argument if any.
  */
 function mergeFiles(destFilePath, srcFilePathsOrGlobPatterns, options, cb) {
-    const { callback, effectiveOptions, returnValue } = normalizeArgs(
+    const { callback, normalizedOptions, returnValue } = normalizeArgs(
         options,
         cb
     );
@@ -29,7 +29,7 @@ function mergeFiles(destFilePath, srcFilePathsOrGlobPatterns, options, cb) {
             defaultEncoding: "utf8",
             autoClose: true,
         });
-        mergeStreams(destStream, srcStreams, effectiveOptions, callback);
+        mergeStreams(destStream, srcStreams, normalizedOptions, callback);
     }, callback);
 
     return returnValue;

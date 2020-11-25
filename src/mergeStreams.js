@@ -9,7 +9,7 @@ const { mergeToString } = require("./mergeToString.js");
  * @param {Function} [cb]   Callback function which will be called at completion. Will receive error as first argument if any.
  */
 function mergeStreams(destStream, srcStreams, options, cb) {
-    const { callback, effectiveOptions, returnValue } = normalizeArgs(
+    const { callback, normalizedOptions, returnValue } = normalizeArgs(
         options,
         cb
     );

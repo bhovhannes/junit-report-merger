@@ -1,10 +1,10 @@
 function normalizeArgs(options, cb) {
-    let effectiveOptions = options || {};
+    let normalizedOptions = options || {};
     let callback;
     if (typeof cb === "function") {
         callback = cb;
     } else if (typeof options === "function" && !cb) {
-        effectiveOptions = {};
+        normalizedOptions = {};
         callback = options;
     }
 
@@ -23,7 +23,7 @@ function normalizeArgs(options, cb) {
 
     return {
         callback,
-        effectiveOptions,
+        normalizedOptions,
         returnValue,
     };
 }
