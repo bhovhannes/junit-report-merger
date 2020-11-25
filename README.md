@@ -1,6 +1,6 @@
 # junit-report-merger
 
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url]
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![codecov][codecov-image]][codecov-url] [![MIT License][license-image]][license-url]
 
 Merges multiple JUnit XML reports into one.
 
@@ -173,3 +173,5 @@ MIT (http://www.opensource.org/licenses/mit-license.php)
 [npm-url]: https://www.npmjs.org/package/junit-report-merger
 [npm-version-image]: https://img.shields.io/npm/v/junit-report-merger.svg?style=flat
 [npm-downloads-image]: https://img.shields.io/npm/dm/junit-report-merger.svg?style=flat
+[codecov-url]: https://codecov.io/gh/bhovhannes/junit-report-merger
+[codecov-image]: https://codecov.io/gh/bhovhannes/junit-report-merger/branch/master/graph/badge.svg?token=iJvUUKrgzB
