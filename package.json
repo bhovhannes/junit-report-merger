@@ -3,8 +3,13 @@
   "version": "0.0.6",
   "description": "Merges multiple JUnit XML reports into one.",
   "main": "index.js",
+  "bin": {
+    "junit-report-merger": "./cli.js",
+    "jrm": "./cli.js"
+  },
   "files": [
     "index.js",
+    "cli.js",
     "src/**/*.js"
   ],
   "scripts": {

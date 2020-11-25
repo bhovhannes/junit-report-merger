@@ -8,6 +8,28 @@ Reporters of many testing frameworks generate JUnit XML reports. [`mocha-junit-r
 
 `junit-report-merger` creates a new test results report in JUnit XML format by collecting all `<testsuite>` elements from all XML reports and putting them together.
 
+## CLI
+
+After installing the package, you'll get a `jrm` binary, which you can use to merge multiple xml reports into one.  
+In a nutshell it is a tiny wrapper around [mergeFiles](#mergefiles) api.
+
+### Usage
+
+Assuming your JUnit test results are in `./results/units/` folder, and you want to get a combined test result file in `./results/combined.xml`:
+
+```shell script
+jrm ./results/combined.xml "./results/units/*xml"
+```
+
+You can also specify multiple glob patterns:
+
+```shell script
+jrm ./results/combined.xml "./results/units/*.xml" "./results/e2e/*.xml"
+```
+
+**NOTE**  
+Make sure to wrap each pattern with double quotes (`"`), otherwise your shell may try to expand it instead of passing to Node.js.
+
 ## API
 
 Package exports a single object with the following methods.
@@ -17,6 +39,24 @@ Package exports a single object with the following methods.
 [mergeStreams](#mergestreams) - Merges contents of multiple XML report streams into a single XML report stream.
 
 [mergeToString](#mergetostring) - Merges multiple XML report strings into a single XML report string.
+
+## Usage
+
+```javascript
+const path = require("path");
+const { mergeFiles } = require("junit-report-merger");
+
+const outputFile = path.join(__dirname, "results", "combined.xml");
+
+const inputFiles = ["./results/units/*.xml", "./results/e2e/*.xml"];
+
+try {
+  await mergeFiles(outputFile, inputFiles);
+  console.log("Merged, check ./results/combined.xml");
+} catch (err) {
+  console.error(error);
+}
+```
 
 ## `mergeFiles`
 
