@@ -3,8 +3,12 @@
  * @author  Hovhannes Babayan <bhovhannes at gmail dot com>
  */
 
+const { mergeFiles } = require("./src/mergeFiles.js");
+const { mergeStreams } = require("./src/mergeStreams.js");
+const { mergeToString } = require("./src/mergeToString.js");
+
 module.exports = {
-    mergeFiles: require('./src/mergeFiles'),
-    mergeStreams: require('./src/mergeStreams'),
-    mergeToString: require('./src/mergeToString')
+    mergeFiles,
+    mergeStreams,
+    mergeToString,
 };
