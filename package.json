@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "fast-glob": "3.2.4",
-    "xmlbuilder": "15.1.1"
+    "xmlbuilder2": "2.4.0"
   },
   "repository": {
     "type": "git",
