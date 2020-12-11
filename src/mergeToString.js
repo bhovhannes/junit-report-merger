@@ -1,4 +1,4 @@
-const { DOMParser, XMLSerializer } = require("xmldom");
+const { create } = require("xmlbuilder2");
 
 /**
  * Merges contents of given XML strings and returns resulting XML string.
@@ -7,12 +7,9 @@ const { DOMParser, XMLSerializer } = require("xmldom");
  * @return {String}
  */
 function mergeToString(srcStrings, options) {
-    const {
-        documentElement: combinedTestSuitesNode,
-    } = new DOMParser().parseFromString(
-        '<?xml version="1.0"?>\n<testsuites></testsuites>',
-        "text/xml"
-    );
+    const targetDoc = create({
+        testsuites: {},
+    });
 
     const attrs = {
         failures: 0,
@@ -21,30 +18,33 @@ function mergeToString(srcStrings, options) {
     };
 
     srcStrings.forEach((srcString) => {
-        const doc = new DOMParser().parseFromString(srcString, "text/xml");
-        const nodes = doc.getElementsByTagName("testsuite"),
-            nodeCount = nodes.length;
-        for (let i = 0; i < nodeCount; ++i) {
-            const testSuiteNode = nodes[i];
-            for (const attr in attrs) {
-                attrs[attr] += Number(testSuiteNode.getAttribute(attr));
-            }
-            combinedTestSuitesNode.appendChild(testSuiteNode);
+        const doc = create(srcString, {});
+
+        doc.root().each(
+            (xmlBuilder) => {
+                if (xmlBuilder.node.nodeName.toLowerCase() === "testsuite") {
+                    for (const attrNode of xmlBuilder.node.attributes) {
+                        const name = attrNode.name;
+                        if (name in attrs) {
+                            attrs[name] += Number(attrNode.value);
+                        }
+                    }
+                    targetDoc.root().import(xmlBuilder);
+                }
+            },
+            true,
+            true
+        );
+
+        for (const attr in attrs) {
+            targetDoc.root().att(attr, attrs[attr]);
         }
     });
 
-    for (const attr in attrs) {
-        combinedTestSuitesNode.setAttribute(attr, attrs[attr]);
-    }
-
-    let xmlString = new XMLSerializer().serializeToString(
-        combinedTestSuitesNode
-    );
-    if (xmlString.indexOf("<?") !== 0) {
-        xmlString = '<?xml version="1.0"?>\n' + xmlString;
-    }
-
-    return xmlString;
+    return targetDoc.toString({
+        prettyPrint: true,
+        noDoubleEncoding: true,
+    });
 }
 
 module.exports = { mergeToString };

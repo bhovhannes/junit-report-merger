@@ -7,7 +7,7 @@ const {
 } = require("@jest/globals");
 const path = require("path");
 const fsPromises = require("fs").promises;
-const xmldom = require("xmldom");
+const { create } = require("xmlbuilder2");
 const { mergeFiles } = require("../index.js");
 
 describe("e2e", function () {
@@ -15,11 +15,11 @@ describe("e2e", function () {
     beforeEach(() => {
         fixturePaths = {
             inputs: [
-                path.join(__dirname, "fixtures", "1.xml"),
-                path.join(__dirname, "fixtures", "2.xml"),
-                path.join(__dirname, "fixtures", "3.xml"),
+                path.join(__dirname, "fixtures", "m1.xml"),
+                path.join(__dirname, "fixtures", "m2.xml"),
+                path.join(__dirname, "fixtures", "m3.xml"),
             ],
-            output: path.join(__dirname, "fixtures", "output.xml"),
+            output: path.join(__dirname, "output", "actual-combined-1-3.xml"),
         };
     });
 
@@ -29,18 +29,22 @@ describe("e2e", function () {
 
     async function assertOutput() {
         const contents = await fsPromises.readFile(fixturePaths.output, "utf8");
-        const doc = new xmldom.DOMParser().parseFromString(
-            contents,
-            "text/xml"
-        );
-        const rootNode = doc.documentElement;
-        const testSuiteNodes = rootNode.getElementsByTagName("testsuite");
-        expect(testSuiteNodes).toHaveLength(4);
+        const doc = create(contents).root();
+        expect(doc.node.childNodes).toHaveLength(4);
 
-        expect(rootNode.tagName.toLowerCase()).toBe("testsuites");
-        expect(rootNode.getAttribute("tests")).toBe("6");
-        expect(rootNode.getAttribute("errors")).toBe("0");
-        expect(rootNode.getAttribute("failures")).toBe("2");
+        expect(doc.node.nodeName.toLowerCase()).toBe("testsuites");
+        const foundAttrs = {};
+        for (const attrNode of doc.node.attributes) {
+            const name = attrNode.name;
+            if (["tests", "errors", "failures"].includes(name)) {
+                foundAttrs[name] = attrNode.value;
+            }
+        }
+        expect(foundAttrs).toEqual({
+            tests: "6",
+            errors: "0",
+            failures: "2",
+        });
     }
 
     describe("mergeFiles", function () {
@@ -55,7 +59,7 @@ describe("e2e", function () {
         });
 
         it("merges xml reports matching given glob pattern", async () => {
-            await mergeFiles(fixturePaths.output, ["./**/fixtures/*.xml"]);
+            await mergeFiles(fixturePaths.output, ["./**/fixtures/m*.xml"]);
             await assertOutput();
         });
 
@@ -67,13 +71,7 @@ describe("e2e", function () {
                 fixturePaths.output,
                 "utf8"
             );
-            const doc = new xmldom.DOMParser().parseFromString(
-                contents,
-                "text/xml"
-            );
-            const rootNode = doc.documentElement;
-            const testSuiteNodes = rootNode.getElementsByTagName("testsuite");
-            expect(testSuiteNodes).toHaveLength(0);
+            expect(create(contents).root().node.childNodes).toHaveLength(0);
         });
 
         it("merges xml reports (options passed, callback style)", async () => {
@@ -108,6 +106,41 @@ describe("e2e", function () {
 
             await assertOutput();
         });
+
+        it("preserves xml entities", async () => {
+            await mergeFiles(
+                fixturePaths.output,
+                [path.join(__dirname, "fixtures", "with-entity-char.xml")],
+                {}
+            );
+
+            const contents = await fsPromises.readFile(
+                fixturePaths.output,
+                "utf8"
+            );
+            expect(contents).toContain("failure attr with ]]&gt;");
+            expect(contents).toContain("failure message with ]]&gt;");
+        });
+
+        it("merges m*.xml files into one, matching predefined snapshot", async () => {
+            await mergeFiles(fixturePaths.output, fixturePaths.inputs);
+            const actualContents = await fsPromises.readFile(
+                fixturePaths.output,
+                "utf8"
+            );
+            const expectedContents = await fsPromises.readFile(
+                path.join(
+                    __dirname,
+                    "fixtures",
+                    "expected",
+                    "expected-combined-1-3.xml"
+                ),
+                "utf8"
+            );
+            expect(create(actualContents).toObject()).toEqual(
+                create(expectedContents).toObject()
+            );
+        });
     });
 
     describe("cli", function () {
@@ -115,7 +148,7 @@ describe("e2e", function () {
             await new Promise((resolve, reject) => {
                 const { exec } = require("child_process");
                 exec(
-                    'node ./cli.js ./test/fixtures/output.xml "./test/**/1.xml" "./test/**/*.xml"',
+                    'node ./cli.js ./test/output/actual-combined-1-3.xml "./test/**/m1.xml" "./test/**/m?.xml"',
                     function (error, stdout, stderr) {
                         if (error) {
                             reject(error);
