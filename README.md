@@ -10,8 +10,32 @@ Reporters of many testing frameworks generate JUnit XML reports. [`mocha-junit-r
 
 ## CLI
 
-After installing the package, you'll get a `jrm` binary, which you can use to merge multiple xml reports into one.  
+Package provides a `jrm` binary, which you can use to merge multiple xml reports into one.  
 In a nutshell it is a tiny wrapper around [mergeFiles](#mergefiles) api.
+
+### Installing
+
+#### Globally
+
+```shell script
+npm install -g junit-report-merger
+```
+
+In this case you'll be able to execute `jrm` binary from within your shell.
+
+#### Locally
+
+```shell script
+npm install junit-report-merger --save-dev
+```
+
+In this case `jrm` binary will be available only inside `package.json` scripts:
+
+```
+scripts: {
+    "merge-reports": "jrm combined.xml \"results/*.xml\""
+}
+```
 
 ### Usage
 
