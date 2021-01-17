@@ -17,7 +17,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "fast-glob": "3.2.4",
+    "fast-glob": "3.2.5",
     "xmlbuilder2": "2.4.0"
   },
   "repository": {
