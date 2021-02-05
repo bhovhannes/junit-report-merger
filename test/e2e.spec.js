@@ -63,6 +63,31 @@ describe("e2e", function () {
             await assertOutput();
         });
 
+        it("calls onFileMatched for each matching file", async () => {
+            const onFileMatched = jest.fn();
+            await mergeFiles(fixturePaths.output, ["./**/fixtures/m*.xml"], {
+                onFileMatched,
+            });
+            expect(onFileMatched.mock.calls).toEqual([
+                [
+                    {
+                        filePath: "test/fixtures/m1.xml",
+                    },
+                ],
+                [
+                    {
+                        filePath: "test/fixtures/m2.xml",
+                    },
+                ],
+                [
+                    {
+                        filePath: "test/fixtures/m3.xml",
+                    },
+                ],
+            ]);
+            await assertOutput();
+        });
+
         it("produces an empty xml report when no files match given glob pattern", async () => {
             await mergeFiles(fixturePaths.output, [
                 "./no/files/will/match/this/*.xml",
@@ -145,7 +170,7 @@ describe("e2e", function () {
 
     describe("cli", function () {
         it("merges xml reports", async () => {
-            await new Promise((resolve, reject) => {
+            const stdout = await new Promise((resolve, reject) => {
                 const { exec } = require("child_process");
                 exec(
                     'node ./cli.js ./test/output/actual-combined-1-3.xml "./test/**/m1.xml" "./test/**/m?.xml"',
@@ -158,7 +183,31 @@ describe("e2e", function () {
                     }
                 );
             });
+            expect(stdout).toMatch("3 files processed");
+            expect(stdout).not.toMatch(
+                "Provided input file patterns did not matched any file."
+            );
             await assertOutput();
+        });
+
+        it("provides meaningful message if no input files can be found", async () => {
+            const stdout = await new Promise((resolve, reject) => {
+                const { exec } = require("child_process");
+                exec(
+                    'node ./cli.js ./test/output/actual-combined-1-3.xml "./does-not-exist/**/x1.xml"',
+                    function (error, stdout, stderr) {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(stdout);
+                        }
+                    }
+                );
+            });
+            expect(stdout).toMatch("0 files processed");
+            expect(stdout).toMatch(
+                "Provided input file patterns did not matched any file."
+            );
         });
     });
 });

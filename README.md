@@ -4,7 +4,7 @@
 
 Merges multiple JUnit XML reports into one.
 
-Reporters of many testing frameworks generate JUnit XML reports. [`mocha-junit-reporter`](https://www.npmjs.com/package/mocha-junit-reporter), [`karma-junit-reporter`](https://www.npmjs.com/package/karma-junit-reporter) to name a few. Sometimes there is a need to combine multiple reports into one. This is what `junit-report-merger` does.
+Reporters of many testing frameworks generate JUnit XML reports. [`mocha-junit-reporter`](https://www.npmjs.com/package/mocha-junit-reporter), [`karma-junit-reporter`](https://www.npmjs.com/package/karma-junit-reporter) to name a few. Sometimes there is a need to combine multiple reports together in a single file. This is what `junit-report-merger` does.
 
 `junit-report-merger` creates a new test results report in JUnit XML format by collecting all `<testsuite>` elements from all XML reports and putting them together.
 
@@ -42,7 +42,7 @@ scripts: {
 Assuming your JUnit test results are in `./results/units/` folder, and you want to get a combined test result file in `./results/combined.xml`:
 
 ```shell script
-jrm ./results/combined.xml "./results/units/*xml"
+jrm ./results/combined.xml "./results/units/*.xml"
 ```
 
 You can also specify multiple glob patterns:
@@ -90,25 +90,25 @@ Signature:
 mergeFiles(
     destFilePath: string,
     srcFilePathsOrGlobPatterns: string[],
-    options?: {}
+    options?: MergeFilesOptions
 ) => Promise<void>
 
 mergeFiles(
     destFilePath: string,
     srcFilePathsOrGlobPatterns: string[],
-    options?: {},
+    options?: MergeFilesOptions,
     cb?: (err) => void
 ) => void
 ```
 
 Reads multiple files, merges their contents and write into the given file.
 
-| Param                      | Type                              | Description                                                                                                      |
-| -------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| destFilePath               | <code>String</code>               | Where the output should be stored. Denotes a path to file. If file already exists, it will be overwritten.       |
-| srcFilePathsOrGlobPatterns | <code>Array.&lt;String&gt;</code> | Paths to the files which should be merged. You can also specify glob patterns, such as `results/**/report-*.xml` |
-| [options]                  | <code>Object</code>               | Merge options. Currently unused.                                                                                 |
-| [cb]                       | <code>function</code>             | Callback function which will be called at completion. Will receive error as first argument if any.               |
+| Param                      | Type                                                 | Description                                                                                                      |
+| -------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| destFilePath               | <code>string</code>                                  | Where the output should be stored. Denotes a path to file. If file already exists, it will be overwritten.       |
+| srcFilePathsOrGlobPatterns | <code>string[]</code>                                | Paths to the files which should be merged. You can also specify glob patterns, such as `results/**/report-*.xml` |
+| [options]                  | <code>[MergeFilesOptions](#mergefilesoptions)</code> | Merge options.                                                                                                   |
+| [cb]                       | <code>(err?: Error) => void</code>                   | Callback function which will be called at completion. Will receive error as first argument if any.               |
 
 Last argument - `cb` is a Node.js style callback function. If callback function is not passed, function will return a promise. That is, all the following variants will work:
 
@@ -125,6 +125,24 @@ await mergeFiles(destFilePath, srcFilePaths, {});
 // options missing, promise style
 await mergeFiles(destFilePath, srcFilePaths);
 ```
+
+### `MergeFilesOptions`
+
+These are the options accepted by [`mergeFiles`](#mergefiles).
+
+Signature:
+
+```typescript
+type MergeFilesOptions = {
+    onFileMatched? (matchInfo: {
+        filePath: string
+    }) => void
+}
+```
+
+#### `onFileMatched`
+
+[`mergeFiles`](#mergefiles) calls function specified by the `onFileMatched` option once for each file matched by `srcFilePaths`, right before file processing begins.
 
 ## mergeStreams
 
@@ -147,12 +165,12 @@ mergeStreams(
 
 Reads multiple streams, merges their contents and write into the given stream.
 
-| Param      | Type                                  | Description                                                                                        |
-| ---------- | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| destStream | <code>WriteStream</code>              | A stream which will be used to write the merge result.                                             |
-| srcStreams | <code>Array.&lt;ReadStream&gt;</code> | Streams which will be used to read data from.                                                      |
-| [options]  | <code>Object</code>                   | Merge options. Currently unused.                                                                   |
-| [cb]       | <code>function</code>                 | Callback function which will be called at completion. Will receive error as first argument if any. |
+| Param      | Type                               | Description                                                                                        |
+| ---------- | ---------------------------------- | -------------------------------------------------------------------------------------------------- |
+| destStream | <code>WriteStream</code>           | A stream which will be used to write the merge result.                                             |
+| srcStreams | <code>ReadStream[]</code>          | Streams which will be used to read data from.                                                      |
+| [options]  | <code>object</code>                | Merge options. Currently unused.                                                                   |
+| [cb]       | <code>(err?: Error) => void</code> | Callback function which will be called at completion. Will receive error as first argument if any. |
 
 Last argument - `cb` is a Node.js style callback function. If callback function is not passed, function will return a promise. That is, all the following variants will work:
 
@@ -183,10 +201,10 @@ mergeToString(
 
 Merges given XML strings and returns the result.
 
-| Param      | Type                              | Description                         |
-| ---------- | --------------------------------- | ----------------------------------- |
-| srcStrings | <code>Array.&lt;String&gt;</code> | Array of strings to merge together. |
-| [options]  | <code>Object</code>               | Merge options. Currently unused.    |
+| Param      | Type                  | Description                         |
+| ---------- | --------------------- | ----------------------------------- |
+| srcStrings | <code>string[]</code> | Array of strings to merge together. |
+| [options]  | <code>object</code>   | Merge options. Currently unused.    |
 
 ## License
 
