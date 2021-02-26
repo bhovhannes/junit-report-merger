@@ -67,18 +67,18 @@ Package exports a single object with the following methods.
 ## Usage
 
 ```javascript
-const path = require("path");
-const { mergeFiles } = require("junit-report-merger");
+const path = require('path')
+const { mergeFiles } = require('junit-report-merger')
 
-const outputFile = path.join(__dirname, "results", "combined.xml");
+const outputFile = path.join(__dirname, 'results', 'combined.xml')
 
-const inputFiles = ["./results/units/*.xml", "./results/e2e/*.xml"];
+const inputFiles = ['./results/units/*.xml', './results/e2e/*.xml']
 
 try {
-  await mergeFiles(outputFile, inputFiles);
-  console.log("Merged, check ./results/combined.xml");
+  await mergeFiles(outputFile, inputFiles)
+  console.log('Merged, check ./results/combined.xml')
 } catch (err) {
-  console.error(error);
+  console.error(error)
 }
 ```
 
@@ -96,8 +96,8 @@ mergeFiles(
 mergeFiles(
     destFilePath: string,
     srcFilePathsOrGlobPatterns: string[],
-    options?: MergeFilesOptions,
-    cb?: (err) => void
+    options: MergeFilesOptions,
+    cb: (err?: Error) => void
 ) => void
 ```
 
@@ -114,16 +114,16 @@ Last argument - `cb` is a Node.js style callback function. If callback function 
 
 ```javascript
 // options passed, callback style
-mergeFiles(destFilePath, srcFilePaths, {}, (err) => {});
+mergeFiles(destFilePath, srcFilePaths, {}, (err) => {})
 
 // options missing, callback style
-mergeFiles(destFilePath, srcFilePaths, (err) => {});
+mergeFiles(destFilePath, srcFilePaths, (err) => {})
 
 // options passed, promise style
-await mergeFiles(destFilePath, srcFilePaths, {});
+await mergeFiles(destFilePath, srcFilePaths, {})
 
 // options missing, promise style
-await mergeFiles(destFilePath, srcFilePaths);
+await mergeFiles(destFilePath, srcFilePaths)
 ```
 
 ### `MergeFilesOptions`
@@ -150,16 +150,16 @@ Signature:
 
 ```typescript
 mergeStreams(
-    destStream: WriteStream,
-    srcStreams: ReadStream[],
+    destStream: WritableStream,
+    srcStreams: ReadableStream[],
     options?: {}
 ) => Promise<void>
 
 mergeStreams(
-    destStream: WriteStream,
-    srcStreams: ReadStream[],
-    options?: {},
-    cb?: (err) => void
+    destStream: WritableStream,
+    srcStreams: ReadableStream[],
+    options: {},
+    cb: (err?: Error) => void
 ) => void
 ```
 
@@ -167,8 +167,8 @@ Reads multiple streams, merges their contents and write into the given stream.
 
 | Param      | Type                               | Description                                                                                        |
 | ---------- | ---------------------------------- | -------------------------------------------------------------------------------------------------- |
-| destStream | <code>WriteStream</code>           | A stream which will be used to write the merge result.                                             |
-| srcStreams | <code>ReadStream[]</code>          | Streams which will be used to read data from.                                                      |
+| destStream | <code>WritableStream</code>        | A stream which will be used to write the merge result.                                             |
+| srcStreams | <code>ReadableStream[]</code>      | Streams which will be used to read data from.                                                      |
 | [options]  | <code>object</code>                | Merge options. Currently unused.                                                                   |
 | [cb]       | <code>(err?: Error) => void</code> | Callback function which will be called at completion. Will receive error as first argument if any. |
 
@@ -176,16 +176,16 @@ Last argument - `cb` is a Node.js style callback function. If callback function 
 
 ```javascript
 // options passed, callback style
-mergeStreams(destStream, srcStreams, {}, (err) => {});
+mergeStreams(destStream, srcStreams, {}, (err) => {})
 
 // options missing, callback style
-mergeStreams(destStream, srcStreams, (err) => {});
+mergeStreams(destStream, srcStreams, (err) => {})
 
 // options passed, promise style
-await mergeStreams(destStream, srcStreams, {});
+await mergeStreams(destStream, srcStreams, {})
 
 // options missing, promise style
-await mergeStreams(destStream, srcStreams);
+await mergeStreams(destStream, srcStreams)
 ```
 
 ## mergeToString

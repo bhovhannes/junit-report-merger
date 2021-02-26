@@ -15,7 +15,7 @@ const { mergeStreams } = require('./mergeStreams.js')
  * @property {MergeFilesCallback} [onFileMatched]  A callback function which will be called for the each match
  *
  * @callback TMergeFilesCompletionCallback
- * @param {Error | null} [err]  Error if any
+ * @param {Error} [err]  Error if any
  * @return {void}
  *
  *

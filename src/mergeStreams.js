@@ -5,20 +5,20 @@ const { mergeToString } = require('./mergeToString.js')
  * @typedef {{}} MergeStreamsOptions
  *
  * @callback TMergeStreamsCallback
- * @param {Error | null} [err]  Error if any
+ * @param {Error} [err]  Error if any
  * @return {void}
  *
  *
  * @callback MergeStreamsCallbackStyle
- * @param {WriteStream} destStream   A stream which will be used to write the merge result.
- * @param {ReadStream[]} srcStreams   Streams which will be used to read data from.
+ * @param {import('stream').Writable} destStream   A stream which will be used to write the merge result.
+ * @param {import('stream').Readable[]} srcStreams   Streams which will be used to read data from.
  * @param {MergeStreamsOptions} options   Merge options. Currently unused.
  * @param {TMergeStreamsCallback} cb   Callback function which will be called at completion. Will receive error as first argument if any.
  * @return {void}
  *
  * @callback MergeStreamsPromiseStyle
- * @param {WriteStream} destStream   A stream which will be used to write the merge result.
- * @param {ReadStream[]} srcStreams   Streams which will be used to read data from.
+ * @param {import('stream').Writable} destStream   A stream which will be used to write the merge result.
+ * @param {import('stream').Readable[]} srcStreams   Streams which will be used to read data from.
  * @param {MergeStreamsOptions} [options]   Merge options. Currently unused.
  * @return {Promise<void>}
  *
