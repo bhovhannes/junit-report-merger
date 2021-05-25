@@ -48,7 +48,7 @@
     "@arkweid/lefthook": "0.7.5",
     "@bhovhannes/shared-config": "0.0.1",
     "@jest/globals": "27.0.0",
-    "jest": "26.6.3",
+    "jest": "27.0.0",
     "prettier": "2.3.0",
     "typescript": "4.2.4"
   },
