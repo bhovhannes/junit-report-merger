@@ -21,7 +21,7 @@
     "typings": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir typings"
   },
   "dependencies": {
-    "fast-glob": "3.2.6",
+    "fast-glob": "3.2.7",
     "xmlbuilder2": "2.4.1"
   },
   "repository": {
