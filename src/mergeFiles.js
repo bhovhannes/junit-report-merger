@@ -57,7 +57,10 @@ module.exports.mergeFiles = function (destFilePath, srcFilePathsOrGlobPatterns, 
       defaultEncoding: 'utf8',
       autoClose: true
     })
-    mergeStreams(destStream, srcStreams, {}, callback)
+    mergeStreams(destStream, srcStreams, {}, function () {
+      destStream.end()
+      callback()
+    })
   }, callback)
 
   return returnValue
