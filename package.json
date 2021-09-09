@@ -49,7 +49,7 @@
     "@bhovhannes/shared-config": "0.0.1",
     "@jest/globals": "27.1.1",
     "jest": "27.1.1",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "typescript": "4.4.2"
   },
   "engines": {
