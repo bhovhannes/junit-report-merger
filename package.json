@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/bhovhannes/junit-report-merger#readme",
   "devDependencies": {
-    "@arkweid/lefthook": "0.7.7",
+    "@evilmartians/lefthook": "1.0.4",
     "@bhovhannes/shared-config": "0.0.1",
     "@jest/globals": "28.1.2",
     "jest": "28.1.2",
