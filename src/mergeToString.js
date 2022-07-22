@@ -18,7 +18,9 @@ module.exports.mergeToString = function (srcStrings, options) {
   const attrs = {
     failures: 0,
     errors: 0,
-    tests: 0
+    tests: 0,
+    skipped: 0,
+    time: 0
   }
 
   srcStrings.forEach((srcString) => {
@@ -26,7 +28,7 @@ module.exports.mergeToString = function (srcStrings, options) {
 
     doc.root().each(
       (xmlBuilder) => {
-        if (xmlBuilder.node.nodeName.toLowerCase() === 'testsuite') {
+        if (xmlBuilder.node.nodeName.toLowerCase() === 'testsuites') {
           for (const attrNode of xmlBuilder.node.attributes) {
             const name = attrNode.name
             if (name in attrs) {
