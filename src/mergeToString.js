@@ -28,7 +28,7 @@ module.exports.mergeToString = function (srcStrings, options) {
 
     doc.root().each(
       (xmlBuilder) => {
-        if (xmlBuilder.node.nodeName.toLowerCase() === 'testsuites') {
+        if (xmlBuilder.node.nodeName.toLowerCase() === 'testsuite') {
           for (const attrNode of xmlBuilder.node.attributes) {
             const name = attrNode.name
             if (name in attrs) {
