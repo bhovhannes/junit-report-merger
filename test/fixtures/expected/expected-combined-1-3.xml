@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<testsuites failures="2" errors="0" tests="6"><testsuite name="PhantomJS 1.9.8" package="" timestamp="2016-01-22T18:25:08" id="0" hostname="MacBook-Pro.local" tests="2" errors="0" failures="1" time="0.026">
+<testsuites failures="2" errors="0" tests="6" skipped="0" time="0.029"><testsuite name="PhantomJS 1.9.8" package="" timestamp="2016-01-22T18:25:08" id="0" hostname="MacBook-Pro.local" tests="2" errors="0" failures="1" time="0.026">
         <properties>
             <property name="browser.fullName" value="PhantomJS/1.9.8 Safari/534.34"/>
         </properties>
