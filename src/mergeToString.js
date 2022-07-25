@@ -18,7 +18,8 @@ module.exports.mergeToString = function (srcStrings, options) {
   const attrs = {
     failures: 0,
     errors: 0,
-    tests: 0
+    tests: 0,
+    skipped: 0,
   }
 
   srcStrings.forEach((srcString) => {
