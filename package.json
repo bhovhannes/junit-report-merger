@@ -21,8 +21,9 @@
     "typings": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir typings"
   },
   "dependencies": {
-    "fast-glob": "3.2.11",
-    "xmlbuilder2": "3.0.2"
+    "commander": "~9.4.0",
+    "fast-glob": "~3.2.11",
+    "xmlbuilder2": "~3.0.2"
   },
   "repository": {
     "type": "git",
@@ -45,14 +46,14 @@
   },
   "homepage": "https://github.com/bhovhannes/junit-report-merger#readme",
   "devDependencies": {
-    "@evilmartians/lefthook": "1.0.5",
     "@bhovhannes/shared-config": "0.0.1",
+    "@evilmartians/lefthook": "1.0.5",
     "@jest/globals": "28.1.3",
     "jest": "28.1.3",
     "prettier": "2.7.1",
     "typescript": "4.7.4"
   },
   "engines": {
-    "node": ">=12"
+    "node": "^12.20.0 || >=14"
   }
 }
