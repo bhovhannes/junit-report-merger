@@ -19,7 +19,7 @@ module.exports.mergeToString = function (srcStrings, options) {
     failures: 0,
     errors: 0,
     tests: 0,
-    skipped: 0,
+    skipped: 0
   }
 
   srcStrings.forEach((srcString) => {
