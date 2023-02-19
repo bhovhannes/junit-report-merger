@@ -128,6 +128,18 @@ describe('e2e', function () {
       expect(contents).toContain('failure message with ]]&gt;')
     })
 
+    it('preserves xml entities in attributes', async () => {
+      await mergeFiles(
+        fixturePaths.output,
+        [path.join(__dirname, 'fixtures', 'with-entities-in-attributes.xml')],
+        {}
+      )
+
+      const contents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+      expect(contents).toContain('SingleSemicolon(&amp;)')
+      expect(contents).toContain('DoubleSemicolon(&amp;;)')
+    })
+
     it('merges m*.xml files into one, matching predefined snapshot', async () => {
       await mergeFiles(fixturePaths.output, fixturePaths.inputs)
       const actualContents = await fsPromises.readFile(fixturePaths.output, 'utf8')
