@@ -36,7 +36,12 @@ async function readableToString(readable) {
   return result
 }
 
+function isNumeric(str) {
+  return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
 module.exports = {
   normalizeArgs,
-  readableToString
+  readableToString,
+  isNumeric
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="A" tests="1" assertions="8" errors="0" warnings="0" failures="0" skipped="0" time="131.521648">
+    <testsuite name="B" tests="1" assertions="8" errors="0" warnings="0" failures="0" skipped="0" time="131.521648">
+      <testsuite name="C" file="/opt/video-converter/tests/SimpleScaleTest.php" tests="1" assertions="8" errors="0" warnings="0" failures="0" skipped="0" time="131.521648">
+        <testcase name="test1" class="SimpleScaleTest" classname="SimpleScaleTest" file="/opt/video-converter/tests/SimpleScaleTest.php" line="27" assertions="8" time="131.521648">
+          <system-out>ffmpeg version 5.1.2 Copyright (c) 2000-2022 the FFmpeg developers
+  built with gcc 9 (Ubuntu 9.4.0-1ubuntu1~20.04.1)
+</system-out>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
