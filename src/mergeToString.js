@@ -1,4 +1,7 @@
 const { create } = require('xmlbuilder2')
+const { KNOWN_ATTRIBUTES } = require('./attributes.js')
+const { isNumeric } = require('./helpers.js')
+const { getNodeAttribute, findTestSuiteByName, isTestSuiteNode } = require('./domHelpers.js')
 
 /**
  * @typedef {{}} MergeStringsOptions
@@ -11,40 +14,100 @@ const { create } = require('xmlbuilder2')
  * @return {String}
  */
 module.exports.mergeToString = function (srcStrings, options) {
-  const targetDoc = create({
-    testsuites: {}
-  })
-
-  const attrs = {
-    failures: 0,
-    errors: 0,
-    tests: 0,
-    skipped: 0
-  }
+  const targetDoc = create(
+    {
+      encoding: 'UTF-8'
+    },
+    {
+      testsuites: {}
+    }
+  )
 
   srcStrings.forEach((srcString) => {
-    const doc = create(srcString, {})
-
-    doc.root().each(
-      (xmlBuilder) => {
-        if (xmlBuilder.node.nodeName.toLowerCase() === 'testsuite') {
-          for (const attrNode of xmlBuilder.node.attributes) {
-            const name = attrNode.name
-            if (name in attrs) {
-              attrs[name] += Number(attrNode.value)
+    function handleTestSuiteElement(visitorContext, builder) {
+      const suiteName = getNodeAttribute(builder.node, 'name')
+      const targetTestSuite = findTestSuiteByName(visitorContext.targetBuilder, suiteName)
+      if (targetTestSuite) {
+        // merge attributes from builder.node with targetTestSuite.node
+        for (let srcAttr of builder.node.attributes) {
+          const existingValue = getNodeAttribute(targetTestSuite.node, srcAttr.name)
+          if (existingValue !== undefined) {
+            if (
+              srcAttr.name in KNOWN_ATTRIBUTES &&
+              isNumeric(srcAttr.value) &&
+              isNumeric(existingValue)
+            ) {
+              const { aggregator } = KNOWN_ATTRIBUTES[srcAttr.name]
+              targetTestSuite.att(srcAttr.name, aggregator(existingValue, srcAttr.value))
             }
+          } else {
+            targetTestSuite.att(srcAttr.name, srcAttr.value)
           }
-          targetDoc.root().import(xmlBuilder)
         }
-      },
-      true,
-      true
-    )
-
-    for (const attr in attrs) {
-      targetDoc.root().att(attr, attrs[attr])
+        return targetTestSuite
+      } else {
+        visitorContext.targetBuilder.import(builder)
+      }
     }
+
+    function visitNodesRecursively(visitorContext, startingBuilder) {
+      startingBuilder.each(
+        (builder) => {
+          const { node } = builder
+          if (isTestSuiteNode(node)) {
+            const childBuilder = handleTestSuiteElement(visitorContext, builder)
+            if (childBuilder) {
+              let targetBuilderBackup = visitorContext.targetBuilder
+              visitorContext.targetBuilder = childBuilder
+              visitNodesRecursively(visitorContext, builder)
+              visitorContext.targetBuilder = targetBuilderBackup
+            }
+          } else {
+            visitorContext.targetBuilder.import(builder)
+          }
+        },
+        false,
+        false
+      )
+    }
+
+    visitNodesRecursively(
+      {
+        currentPath: [],
+        targetBuilder: targetDoc.root()
+      },
+      create(srcString).root()
+    )
   })
+
+  const attributes = {}
+  const attributeNames = []
+  for (let attrName of Object.keys(KNOWN_ATTRIBUTES)) {
+    if (KNOWN_ATTRIBUTES[attrName].rollup) {
+      attributeNames.push(attrName)
+    }
+  }
+  const testSuitesElement = targetDoc.root()
+  testSuitesElement.each(
+    ({ node }) => {
+      if (isTestSuiteNode(node)) {
+        for (let attrName of attributeNames) {
+          const attrValue = getNodeAttribute(node, attrName)
+          if (attrValue !== undefined && isNumeric(attrValue)) {
+            const { aggregator } = KNOWN_ATTRIBUTES[attrName]
+            attributes[attrName] = aggregator(attributes[attrName] || 0, attrValue)
+          }
+        }
+      }
+    },
+    false,
+    false
+  )
+  for (let attrName of attributeNames) {
+    if (attrName in attributes) {
+      testSuitesElement.att(attrName, attributes[attrName])
+    }
+  }
 
   return targetDoc.toString({
     prettyPrint: true,

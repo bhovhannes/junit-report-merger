@@ -22,7 +22,7 @@ describe('e2e', function () {
   })
 
   async function assertOutput() {
-    const contents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+    const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
     const doc = create(contents).root()
     expect(doc.node.childNodes).toHaveLength(4)
 
@@ -84,7 +84,7 @@ describe('e2e', function () {
 
     it('produces an empty xml report when no files match given glob pattern', async () => {
       await mergeFiles(fixturePaths.output, ['./no/files/will/match/this/*.xml'])
-      const contents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+      const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
       expect(create(contents).root().node.childNodes).toHaveLength(0)
     })
 
@@ -123,7 +123,7 @@ describe('e2e', function () {
         {}
       )
 
-      const contents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+      const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
       expect(contents).toContain('failure attr with ]]&gt;')
       expect(contents).toContain('failure message with ]]&gt;')
     })
@@ -135,20 +135,38 @@ describe('e2e', function () {
         {}
       )
 
-      const contents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+      const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
       expect(contents).toContain('SingleSemicolon(&amp;)')
       expect(contents).toContain('DoubleSemicolon(&amp;;)')
     })
 
     it('merges m*.xml files into one, matching predefined snapshot', async () => {
       await mergeFiles(fixturePaths.output, fixturePaths.inputs)
-      const actualContents = await fsPromises.readFile(fixturePaths.output, 'utf8')
+      const actualContents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
       const expectedContents = await fsPromises.readFile(
         path.join(__dirname, 'fixtures', 'expected', 'expected-combined-1-3.xml'),
         'utf8'
       )
       expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
     })
+
+    it.each([
+      { fixtureFolder: path.join('testsuite-merging', '1') },
+      { fixtureFolder: path.join('testsuite-merging', '2') },
+      { fixtureFolder: path.join('testsuite-merging', '3') },
+      { fixtureFolder: path.join('testsuite-merging', '4') },
+      { fixtureFolder: path.join('testsuite-merging', '5') }
+    ])(
+      'combines similar testsuite elements ("$fixtureFolder/file*.xml" -> "$fixtureFolder/expected.xml")',
+      async ({ fixtureFolder }) => {
+        const expectedOutputPath = path.join(__dirname, 'fixtures', fixtureFolder, 'expected.xml')
+        fixturePaths.inputs = [path.join(__dirname, 'fixtures', fixtureFolder, 'file*.xml')]
+        await mergeFiles(fixturePaths.output, fixturePaths.inputs)
+        const actualContents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
+        const expectedContents = await fsPromises.readFile(expectedOutputPath, { encoding: 'utf8' })
+        expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
+      }
+    )
   })
 
   describe('cli', function () {
