@@ -10,6 +10,10 @@ function isTestSuiteNode(node) {
   return node.nodeName.toLowerCase() === 'testsuite'
 }
 
+function isTestSuitesNode(node) {
+  return node.nodeName.toLowerCase() === 'testsuites'
+}
+
 function findTestSuiteByName(builder, suiteName) {
   return builder.find(
     ({ node }) => isTestSuiteNode(node) && suiteName === getNodeAttribute(node, 'name'),
@@ -21,5 +25,6 @@ function findTestSuiteByName(builder, suiteName) {
 module.exports = {
   findTestSuiteByName,
   isTestSuiteNode,
+  isTestSuitesNode,
   getNodeAttribute
 }

@@ -1,7 +1,13 @@
 const { create } = require('xmlbuilder2')
 const { KNOWN_ATTRIBUTES } = require('./attributes.js')
 const { isNumeric } = require('./helpers.js')
-const { getNodeAttribute, findTestSuiteByName, isTestSuiteNode } = require('./domHelpers.js')
+const {
+  getNodeAttribute,
+  findTestSuiteByName,
+  isTestSuiteNode,
+  isTestSuitesNode,
+  createEmptyBuilder
+} = require('./domHelpers.js')
 
 /**
  * @typedef {{}} MergeStringsOptions
@@ -71,12 +77,23 @@ module.exports.mergeToString = function (srcStrings, options) {
       )
     }
 
+    let srcBuilder = create(srcString)
+    if (!isTestSuitesNode(srcBuilder.root().node)) {
+      srcBuilder = create(
+        {
+          encoding: 'UTF-8'
+        },
+        {
+          testsuites: [srcBuilder.toObject()]
+        }
+      )
+    }
     visitNodesRecursively(
       {
         currentPath: [],
         targetBuilder: targetDoc.root()
       },
-      create(srcString).root()
+      srcBuilder.root()
     )
   })
 

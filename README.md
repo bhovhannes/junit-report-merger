@@ -6,7 +6,7 @@ Merges multiple JUnit XML reports into one.
 
 Reporters of many testing frameworks generate JUnit XML reports. [`mocha-junit-reporter`](https://www.npmjs.com/package/mocha-junit-reporter), [`karma-junit-reporter`](https://www.npmjs.com/package/karma-junit-reporter) to name a few. Sometimes there is a need to combine multiple reports together in a single file. This is what `junit-report-merger` does.
 
-`junit-report-merger` creates a new test results report in JUnit XML format by collecting all `<testsuite>` elements from all XML reports and putting them together.
+`junit-report-merger` creates a new test results report in [JUnit XML format](#junit-xml-format) by collecting all `<testsuite>` elements from all XML reports and putting them together.
 
 ## CLI
 
@@ -205,6 +205,16 @@ Merges given XML strings and returns the result.
 | ---------- | --------------------- | ----------------------------------- |
 | srcStrings | <code>string[]</code> | Array of strings to merge together. |
 | [options]  | <code>object</code>   | Merge options. Currently unused.    |
+
+## JUnit XML Format
+
+Unfortunately, there is no official specification of JUnit XML file format.
+
+The XML schema for the original JUnit XML format is [here](https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd).
+
+Over the time, various CI tools and test management software augmented original format with their own properties.  
+The most comprehensive overview of the format is put together by folks at Testmo [here](https://github.com/testmoapp/junitxml).
+`jrm` produces output conforming to that format and accepts files conforming to that format.
 
 ## License
 
