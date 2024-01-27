@@ -1,7 +1,3 @@
 {
-  "extends": ["config:base", ":disableDependencyDashboard"],
-  "automerge": true,
-  "major": {
-    "automerge": false
-  }
+  "extends": ["github>bhovhannes/shared-config//renovate/default"]
 }
