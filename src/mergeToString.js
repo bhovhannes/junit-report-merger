@@ -5,8 +5,7 @@ const {
   getNodeAttribute,
   findTestSuiteByName,
   isTestSuiteNode,
-  isTestSuitesNode,
-  createEmptyBuilder
+  isTestSuitesNode
 } = require('./domHelpers.js')
 
 /**
@@ -127,6 +126,7 @@ module.exports.mergeToString = function (srcStrings, options) {
   }
 
   return targetDoc.toString({
+    allowEmptyTags: true,
     prettyPrint: true,
     noDoubleEncoding: true
   })

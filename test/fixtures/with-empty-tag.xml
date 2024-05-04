@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.655">
+  <testsuite name="UserMapper" errors="0" failures="0" skipped="0" timestamp="2024-04-13T01:41:56" time="0.598" tests="1">
+    <testcase classname="UserMapper should map UserResponse to UserDto" name="UserMapper should map UserResponse to UserDto" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

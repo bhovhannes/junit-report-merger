@@ -116,6 +116,17 @@ describe('e2e', function () {
       await assertOutput()
     })
 
+    it('preserves empty tags', async () => {
+      await mergeFiles(
+        fixturePaths.output,
+        [path.join(__dirname, 'fixtures', 'with-empty-tag.xml')],
+        {}
+      )
+
+      const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
+      expect(contents).toContain('</testcase>')
+    })
+
     it('preserves xml entities', async () => {
       await mergeFiles(
         fixturePaths.output,
