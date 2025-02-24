@@ -127,6 +127,22 @@ describe('e2e', function () {
       expect(contents).toContain('</testcase>')
     })
 
+    it('correctly merges empty reports', async () => {
+      await mergeFiles(
+        fixturePaths.output,
+        [
+          path.join(__dirname, 'fixtures', 'empty.xml'),
+          path.join(__dirname, 'fixtures', 'spaces.xml')
+        ],
+        {}
+      )
+
+      const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
+      expect(contents).toBe(
+        '<?xml version="1.0" encoding="UTF-8"?>\n' + '<testsuites></testsuites>'
+      )
+    })
+
     it('preserves xml entities', async () => {
       await mergeFiles(
         fixturePaths.output,

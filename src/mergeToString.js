@@ -28,73 +28,76 @@ module.exports.mergeToString = function (srcStrings, options) {
     }
   )
 
-  srcStrings.forEach((srcString) => {
-    function handleTestSuiteElement(visitorContext, builder) {
-      const suiteName = getNodeAttribute(builder.node, 'name')
-      const targetTestSuite = findTestSuiteByName(visitorContext.targetBuilder, suiteName)
-      if (targetTestSuite) {
-        // merge attributes from builder.node with targetTestSuite.node
-        for (let srcAttr of builder.node.attributes) {
-          const existingValue = getNodeAttribute(targetTestSuite.node, srcAttr.name)
-          if (existingValue !== undefined) {
-            if (
-              srcAttr.name in KNOWN_ATTRIBUTES &&
-              isNumeric(srcAttr.value) &&
-              isNumeric(existingValue)
-            ) {
-              const { aggregator } = KNOWN_ATTRIBUTES[srcAttr.name]
-              targetTestSuite.att(srcAttr.name, aggregator(existingValue, srcAttr.value))
+  srcStrings
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .forEach((srcString) => {
+      function handleTestSuiteElement(visitorContext, builder) {
+        const suiteName = getNodeAttribute(builder.node, 'name')
+        const targetTestSuite = findTestSuiteByName(visitorContext.targetBuilder, suiteName)
+        if (targetTestSuite) {
+          // merge attributes from builder.node with targetTestSuite.node
+          for (let srcAttr of builder.node.attributes) {
+            const existingValue = getNodeAttribute(targetTestSuite.node, srcAttr.name)
+            if (existingValue !== undefined) {
+              if (
+                srcAttr.name in KNOWN_ATTRIBUTES &&
+                isNumeric(srcAttr.value) &&
+                isNumeric(existingValue)
+              ) {
+                const { aggregator } = KNOWN_ATTRIBUTES[srcAttr.name]
+                targetTestSuite.att(srcAttr.name, aggregator(existingValue, srcAttr.value))
+              }
+            } else {
+              targetTestSuite.att(srcAttr.name, srcAttr.value)
             }
-          } else {
-            targetTestSuite.att(srcAttr.name, srcAttr.value)
           }
+          return targetTestSuite
+        } else {
+          visitorContext.targetBuilder.import(builder)
         }
-        return targetTestSuite
-      } else {
-        visitorContext.targetBuilder.import(builder)
       }
-    }
 
-    function visitNodesRecursively(visitorContext, startingBuilder) {
-      startingBuilder.each(
-        (builder) => {
-          const { node } = builder
-          if (isTestSuiteNode(node)) {
-            const childBuilder = handleTestSuiteElement(visitorContext, builder)
-            if (childBuilder) {
-              let targetBuilderBackup = visitorContext.targetBuilder
-              visitorContext.targetBuilder = childBuilder
-              visitNodesRecursively(visitorContext, builder)
-              visitorContext.targetBuilder = targetBuilderBackup
+      function visitNodesRecursively(visitorContext, startingBuilder) {
+        startingBuilder.each(
+          (builder) => {
+            const { node } = builder
+            if (isTestSuiteNode(node)) {
+              const childBuilder = handleTestSuiteElement(visitorContext, builder)
+              if (childBuilder) {
+                let targetBuilderBackup = visitorContext.targetBuilder
+                visitorContext.targetBuilder = childBuilder
+                visitNodesRecursively(visitorContext, builder)
+                visitorContext.targetBuilder = targetBuilderBackup
+              }
+            } else {
+              visitorContext.targetBuilder.import(builder)
             }
-          } else {
-            visitorContext.targetBuilder.import(builder)
-          }
-        },
-        false,
-        false
-      )
-    }
+          },
+          false,
+          false
+        )
+      }
 
-    let srcBuilder = create(srcString)
-    if (!isTestSuitesNode(srcBuilder.root().node)) {
-      srcBuilder = create(
+      let srcBuilder = create(srcString)
+      if (!isTestSuitesNode(srcBuilder.root().node)) {
+        srcBuilder = create(
+          {
+            encoding: 'UTF-8'
+          },
+          {
+            testsuites: [srcBuilder.toObject()]
+          }
+        )
+      }
+      visitNodesRecursively(
         {
-          encoding: 'UTF-8'
+          currentPath: [],
+          targetBuilder: targetDoc.root()
         },
-        {
-          testsuites: [srcBuilder.toObject()]
-        }
+        srcBuilder.root()
       )
-    }
-    visitNodesRecursively(
-      {
-        currentPath: [],
-        targetBuilder: targetDoc.root()
-      },
-      srcBuilder.root()
-    )
-  })
+    })
 
   const attributes = {}
   const attributeNames = []
