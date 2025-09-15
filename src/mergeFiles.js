@@ -1,5 +1,5 @@
 const fs = require('fs')
-const fastGlob = require('fast-glob')
+const { glob } = require('tinyglobby')
 const { normalizeArgs } = require('./helpers.js')
 const { mergeStreams } = require('./mergeStreams.js')
 
@@ -39,7 +39,7 @@ const { mergeStreams } = require('./mergeStreams.js')
 module.exports.mergeFiles = function (destFilePath, srcFilePathsOrGlobPatterns, options, cb) {
   const { callback, normalizedOptions, returnValue } = normalizeArgs(options, cb)
 
-  fastGlob(srcFilePathsOrGlobPatterns, { dot: true }).then((srcFilePaths) => {
+  glob(srcFilePathsOrGlobPatterns, { dot: true, expandDirectories: false }).then((srcFilePaths) => {
     const srcStreams = srcFilePaths.map(function (srcFilePath) {
       if (normalizedOptions.onFileMatched) {
         normalizedOptions.onFileMatched({
