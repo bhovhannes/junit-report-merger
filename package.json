@@ -23,7 +23,7 @@
   "dependencies": {
     "commander": "~14.0.0",
     "tinyglobby": "^0.2.15",
-    "xmlbuilder2": "3.1.1"
+    "xmlbuilder2": "4.0.0"
   },
   "repository": {
     "type": "git",
