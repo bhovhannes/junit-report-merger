@@ -48,10 +48,10 @@
   "devDependencies": {
     "@bhovhannes/shared-config": "0.0.1",
     "@evilmartians/lefthook": "2.0.4",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/coverage-v8": "^4.0.13",
     "prettier": "3.6.2",
     "typescript": "5.9.3",
-    "vitest": "^2.1.8"
+    "vitest": "^4.0.13"
   },
   "engines": {
     "node": ">=20"
