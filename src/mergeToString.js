@@ -1,4 +1,3 @@
-const { create } = require('xmlbuilder2')
 const { KNOWN_ATTRIBUTES } = require('./attributes.js')
 const { isNumeric } = require('./helpers.js')
 const {
@@ -16,9 +15,10 @@ const {
  * Merges contents of given XML strings and returns resulting XML string.
  * @param {String[]} srcStrings   Array of strings to merge together.
  * @param {MergeStringsOptions} [options]   Merge options. Currently unused.
- * @return {String}
+ * @return {Promise<String>}
  */
-module.exports.mergeToString = function (srcStrings, options) {
+module.exports.mergeToString = async function (srcStrings, options) {
+  const { create } = await import('xmlbuilder2')
   const targetDoc = create(
     {
       encoding: 'UTF-8'
