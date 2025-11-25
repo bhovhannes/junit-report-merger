@@ -1,7 +1,7 @@
-const fs = require('fs')
+const fs = require('node:fs')
 const { glob } = require('tinyglobby')
 const { normalizeArgs } = require('./helpers.js')
-const { mergeStreams } = require('./mergeStreams.js')
+const { mergeToString } = require('./mergeToString.js')
 
 /**
  * @typedef {Object} MatchInfo  Describes a single file match which will be processed
@@ -39,29 +39,27 @@ const { mergeStreams } = require('./mergeStreams.js')
 module.exports.mergeFiles = function (destFilePath, srcFilePathsOrGlobPatterns, options, cb) {
   const { callback, normalizedOptions, returnValue } = normalizeArgs(options, cb)
 
-  glob(srcFilePathsOrGlobPatterns, { dot: true, expandDirectories: false }).then((srcFilePaths) => {
-    const srcStreams = srcFilePaths.map(function (srcFilePath) {
-      if (normalizedOptions.onFileMatched) {
-        normalizedOptions.onFileMatched({
-          filePath: srcFilePath
-        })
+  glob(srcFilePathsOrGlobPatterns, { dot: true, expandDirectories: false })
+    .then(async (srcFilePaths) => {
+      const srcStrings = []
+
+      for (const srcFilePath of srcFilePaths) {
+        if (normalizedOptions.onFileMatched) {
+          normalizedOptions.onFileMatched({
+            filePath: srcFilePath
+          })
+        }
+
+        const content = await fs.promises.readFile(srcFilePath, 'utf8')
+        srcStrings.push(content)
       }
-      return fs.createReadStream(srcFilePath, {
-        flags: 'r',
-        encoding: 'utf8',
-        autoClose: true
-      })
-    })
-    const destStream = fs.createWriteStream(destFilePath, {
-      flags: 'w',
-      defaultEncoding: 'utf8',
-      autoClose: true
-    })
-    mergeStreams(destStream, srcStreams, {}, function () {
-      destStream.end()
+
+      const mergedContent = mergeToString(srcStrings, {})
+      await fs.promises.writeFile(destFilePath, mergedContent, 'utf8')
+
       callback()
     })
-  }, callback)
+    .catch(callback)
 
   return returnValue
 }
