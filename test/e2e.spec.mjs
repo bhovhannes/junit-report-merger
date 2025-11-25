@@ -1,8 +1,10 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest'
 import path from 'node:path'
 import fsPromises from 'node:fs/promises'
+import fs from 'node:fs'
 import { create } from 'xmlbuilder2'
-import { mergeFiles } from '../index.js'
+import { Writable, Readable } from 'node:stream'
+import { mergeFiles, mergeStreams } from '../index.js'
 
 describe('e2e', function () {
   let fixturePaths
@@ -15,10 +17,6 @@ describe('e2e', function () {
       ],
       output: path.join(__dirname, 'output', 'actual-combined-1-3.xml')
     }
-  })
-
-  afterEach(async () => {
-    await fsPromises.unlink(fixturePaths.output)
   })
 
   async function assertOutput() {
@@ -42,6 +40,10 @@ describe('e2e', function () {
   }
 
   describe('mergeFiles', function () {
+    afterEach(async () => {
+      await fsPromises.unlink(fixturePaths.output)
+    })
+    
     it('merges xml reports (options passed)', async () => {
       await mergeFiles(fixturePaths.output, fixturePaths.inputs, {})
       await assertOutput()
@@ -194,6 +196,122 @@ describe('e2e', function () {
         expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
       }
     )
+  })
+
+  describe('mergeStreams', function () {
+    let destStream
+    let destBuffer
+
+    beforeEach(() => {
+      destBuffer = []
+      destStream = new Writable({
+        write(chunk, encoding, callback) {
+          destBuffer.push(chunk.toString())
+          callback()
+        }
+      })
+    })
+
+    function createReadableFromString(str) {
+      return Readable.from([str])
+    }
+
+    function getDestString() {
+      return destBuffer.join('')
+    }
+
+    it('merges multiple streams (promise style)', async () => {
+      const srcStreams = [
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm1.xml')),
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm2.xml'))
+      ]
+
+      await mergeStreams(destStream, srcStreams, {})
+
+      const result = getDestString()
+      expect(result).toContain('<testsuites')
+      expect(result).toContain('</testsuites>')
+    })
+
+    it('merges multiple streams (options omitted, promise style)', async () => {
+      const srcStreams = [
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm1.xml')),
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm2.xml'))
+      ]
+
+      await mergeStreams(destStream, srcStreams)
+
+      const result = getDestString()
+      expect(result).toContain('<testsuites')
+    })
+
+    it('merges multiple streams (callback style)', async () => {
+      const srcStreams = [
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm1.xml')),
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm2.xml'))
+      ]
+
+      await new Promise((resolve, reject) => {
+        mergeStreams(destStream, srcStreams, {}, (err) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      })
+
+      const result = getDestString()
+      expect(result).toContain('<testsuites')
+    })
+
+    it('merges multiple streams (options omitted, callback style)', async () => {
+      const srcStreams = [
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm1.xml')),
+        fs.createReadStream(path.join(__dirname, 'fixtures', 'm2.xml'))
+      ]
+
+      await new Promise((resolve, reject) => {
+        mergeStreams(destStream, srcStreams, (err) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      })
+
+      const result = getDestString()
+      expect(result).toContain('<testsuites')
+    })
+
+    it('handles stream read errors', async () => {
+      const errorStream = new Readable({
+        read() {
+          this.destroy(new Error('Stream read error'))
+        }
+      })
+
+      const srcStreams = [errorStream]
+
+      await expect(mergeStreams(destStream, srcStreams, {})).rejects.toThrow('Stream read error')
+    })
+
+    it('handles destination stream write errors', async () => {
+      const errorDestStream = new Writable({
+        write(chunk, encoding, callback) {
+          callback(new Error('Write error'))
+        }
+      })
+
+      const srcStreams = [
+        createReadableFromString(
+          '<?xml version="1.0" encoding="UTF-8"?>\n<testsuites></testsuites>'
+        )
+      ]
+
+      await expect(mergeStreams(errorDestStream, srcStreams, {})).rejects.toThrow('Write error')
+    })
   })
 
   describe('cli', function () {
