@@ -54,7 +54,7 @@ module.exports.mergeFiles = function (destFilePath, srcFilePathsOrGlobPatterns, 
         srcStrings.push(content)
       }
 
-      const mergedContent = mergeToString(srcStrings, {})
+      const mergedContent = await mergeToString(srcStrings, {})
       await fs.promises.writeFile(destFilePath, mergedContent, 'utf8')
 
       callback()

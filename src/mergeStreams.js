@@ -29,11 +29,13 @@ const { mergeToString } = require('./mergeToString.js')
 module.exports.mergeStreams = function (destStream, srcStreams, options, cb) {
   const { callback, normalizedOptions, returnValue } = normalizeArgs(options, cb)
 
-  Promise.all(srcStreams.map(readableToString)).then((srcStrings) => {
-    let destString = mergeToString(srcStrings, options)
-    destStream.on('error', callback)
-    destStream.write(destString, 'utf8', callback)
-  }, callback)
+  Promise.all(srcStreams.map(readableToString))
+    .then(async (srcStrings) => {
+      let destString = await mergeToString(srcStrings, options)
+      destStream.on('error', callback)
+      destStream.write(destString, 'utf8', callback)
+    })
+    .catch(callback)
 
   return returnValue
 }
