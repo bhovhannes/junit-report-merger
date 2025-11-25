@@ -17,13 +17,13 @@
   "scripts": {
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,css,md,yml}'",
     "prepublishOnly": "npm run typings",
-    "test": "jest --coverage",
+    "test": "vitest run --coverage",
     "typings": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir typings"
   },
   "dependencies": {
     "commander": "~14.0.0",
     "tinyglobby": "^0.2.15",
-    "xmlbuilder2": "3.1.1"
+    "xmlbuilder2": "4.0.0"
   },
   "repository": {
     "type": "git",
@@ -48,10 +48,10 @@
   "devDependencies": {
     "@bhovhannes/shared-config": "0.0.1",
     "@evilmartians/lefthook": "2.0.4",
-    "@jest/globals": "30.2.0",
-    "jest": "30.2.0",
+    "@vitest/coverage-v8": "^2.1.8",
     "prettier": "3.6.2",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=20"
