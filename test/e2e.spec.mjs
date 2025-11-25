@@ -1,8 +1,8 @@
-const { describe, it, beforeEach, afterEach, expect } = require('@jest/globals')
-const path = require('path')
-const fsPromises = require('fs').promises
-const { create } = require('xmlbuilder2')
-const { mergeFiles } = require('../index.js')
+import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest'
+import path from 'node:path'
+import fsPromises from 'node:fs/promises'
+import { create } from 'xmlbuilder2'
+import { mergeFiles } from '../index.js'
 
 describe('e2e', function () {
   let fixturePaths
@@ -58,7 +58,7 @@ describe('e2e', function () {
     })
 
     it('calls onFileMatched for each matching file', async () => {
-      const onFileMatched = jest.fn()
+      const onFileMatched = vi.fn()
       await mergeFiles(fixturePaths.output, ['./**/fixtures/m*.xml'], {
         onFileMatched
       })
@@ -198,8 +198,8 @@ describe('e2e', function () {
 
   describe('cli', function () {
     it('merges xml reports', async () => {
+      const { exec } = await import('node:child_process')
       const stdout = await new Promise((resolve, reject) => {
-        const { exec } = require('child_process')
         exec(
           'node ./cli.js ./test/output/actual-combined-1-3.xml "./test/**/m1.xml" "./test/**/m?.xml"',
           function (error, stdout, stderr) {
@@ -217,8 +217,8 @@ describe('e2e', function () {
     })
 
     it('provides meaningful message if no input files can be found', async () => {
+      const { exec } = await import('node:child_process')
       const stdout = await new Promise((resolve, reject) => {
-        const { exec } = require('child_process')
         exec(
           'node ./cli.js ./test/output/actual-combined-1-3.xml "./does-not-exist/**/x1.xml"',
           function (error, stdout, stderr) {
