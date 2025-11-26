@@ -18,7 +18,7 @@
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,css,md,yml}'",
     "prepublishOnly": "npm run typings",
     "test": "vitest run --coverage",
-    "typings": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir typings"
+    "typings": "tsc index.js --skipLibCheck --declaration --allowJs --emitDeclarationOnly --outDir typings"
   },
   "dependencies": {
     "commander": "~14.0.0",
