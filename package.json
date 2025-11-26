@@ -1,6 +1,6 @@
 {
   "name": "junit-report-merger",
-  "version": "9.0.1",
+  "version": "10.0.0-0",
   "description": "Merges multiple JUnit XML reports into one.",
   "main": "index.js",
   "bin": {
