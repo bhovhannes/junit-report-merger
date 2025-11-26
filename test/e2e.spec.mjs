@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterEach, expect, vi } from 'vitest'
 import path from 'node:path'
 import fsPromises from 'node:fs/promises'
 import fs from 'node:fs'
-import { create } from 'xmlbuilder2'
+import { XMLParser } from 'fast-xml-parser'
 import { Writable, Readable } from 'node:stream'
 import { mergeFiles, mergeStreams } from '../index.js'
 
@@ -21,29 +21,39 @@ describe('e2e', function () {
 
   async function assertOutput() {
     const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
-    const doc = create(contents).root()
-    expect(doc.node.childNodes).toHaveLength(4)
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      preserveOrder: true,
+      parseTagValue: false,
+      parseAttributeValue: false
+    })
+    const doc = parser.parse(contents)
 
-    expect(doc.node.nodeName.toLowerCase()).toBe('testsuites')
-    const foundAttrs = {}
-    for (const attrNode of doc.node.attributes) {
-      const name = attrNode.name
-      if (['tests', 'errors', 'failures'].includes(name)) {
-        foundAttrs[name] = attrNode.value
+    // Find testsuites node
+    let testSuitesNode = null
+    for (const node of doc) {
+      if (node.testsuites !== undefined) {
+        testSuitesNode = node
+        break
       }
     }
-    expect(foundAttrs).toEqual({
-      tests: '6',
-      errors: '0',
-      failures: '2'
-    })
+
+    expect(testSuitesNode).toBeTruthy()
+    expect(testSuitesNode.testsuites).toHaveLength(4)
+
+    const attrs = testSuitesNode[':@'] || {}
+    expect(attrs).toEqual(expect.objectContaining({
+      '@_tests': '6',
+      '@_errors': '0',
+      '@_failures': '2'
+    }))
   }
 
   describe('mergeFiles', function () {
     afterEach(async () => {
       await fsPromises.unlink(fixturePaths.output)
     })
-    
+
     it('merges xml reports (options passed)', async () => {
       await mergeFiles(fixturePaths.output, fixturePaths.inputs, {})
       await assertOutput()
@@ -87,7 +97,19 @@ describe('e2e', function () {
     it('produces an empty xml report when no files match given glob pattern', async () => {
       await mergeFiles(fixturePaths.output, ['./no/files/will/match/this/*.xml'])
       const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
-      expect(create(contents).root().node.childNodes).toHaveLength(0)
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        preserveOrder: true
+      })
+      const doc = parser.parse(contents)
+      let testSuitesNode = null
+      for (const node of doc) {
+        if (node.testsuites !== undefined) {
+          testSuitesNode = node
+          break
+        }
+      }
+      expect(testSuitesNode.testsuites).toHaveLength(0)
     })
 
     it('merges xml reports (options passed, callback style)', async () => {
@@ -176,7 +198,13 @@ describe('e2e', function () {
         path.join(__dirname, 'fixtures', 'expected', 'expected-combined-1-3.xml'),
         'utf8'
       )
-      expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        preserveOrder: false,
+        parseTagValue: false,
+        parseAttributeValue: true
+      })
+      expect(parser.parse(actualContents)).toEqual(parser.parse(expectedContents))
     })
 
     it.each([
@@ -193,7 +221,13 @@ describe('e2e', function () {
         await mergeFiles(fixturePaths.output, fixturePaths.inputs)
         const actualContents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
         const expectedContents = await fsPromises.readFile(expectedOutputPath, { encoding: 'utf8' })
-        expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
+        const parser = new XMLParser({
+          ignoreAttributes: false,
+          preserveOrder: false,
+          parseTagValue: false,
+          parseAttributeValue: true
+        })
+        expect(parser.parse(actualContents)).toEqual(parser.parse(expectedContents))
       }
     )
   })
