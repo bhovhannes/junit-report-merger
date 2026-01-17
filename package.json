@@ -49,7 +49,7 @@
     "@bhovhannes/shared-config": "0.0.1",
     "@evilmartians/lefthook": "2.0.15",
     "@vitest/coverage-v8": "^4.0.13",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "typescript": "5.9.3",
     "vitest": "^4.0.13"
   },
