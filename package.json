@@ -47,7 +47,7 @@
   "homepage": "https://github.com/bhovhannes/junit-report-merger#readme",
   "devDependencies": {
     "@bhovhannes/shared-config": "0.0.1",
-    "@evilmartians/lefthook": "2.0.15",
+    "@evilmartians/lefthook": "2.0.16",
     "@vitest/coverage-v8": "^4.0.13",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
