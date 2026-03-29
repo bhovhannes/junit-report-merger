@@ -50,7 +50,7 @@
     "@evilmartians/lefthook": "2.1.4",
     "@vitest/coverage-v8": "^4.0.13",
     "prettier": "3.8.1",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "vitest": "^4.0.13"
   },
   "engines": {
