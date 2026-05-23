@@ -19,7 +19,10 @@ describe('e2e', function () {
     }
   })
 
-  async function assertOutput() {
+  /**
+   * @param {{sumTime: boolean}} options
+   */
+  async function assertOutput(options = {}) {
     const contents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
     const doc = create(contents).root()
     expect(doc.node.childNodes).toHaveLength(4)
@@ -28,14 +31,15 @@ describe('e2e', function () {
     const foundAttrs = {}
     for (const attrNode of doc.node.attributes) {
       const name = attrNode.name
-      if (['tests', 'errors', 'failures'].includes(name)) {
+      if (['tests', 'errors', 'failures', 'time'].includes(name)) {
         foundAttrs[name] = attrNode.value
       }
     }
     expect(foundAttrs).toEqual({
       tests: '6',
       errors: '0',
-      failures: '2'
+      failures: '2',
+      time: options.sumTime ? '0.029' : '0.026'
     })
   }
 
@@ -43,7 +47,7 @@ describe('e2e', function () {
     afterEach(async () => {
       await fsPromises.unlink(fixturePaths.output)
     })
-    
+
     it('merges xml reports (options passed)', async () => {
       await mergeFiles(fixturePaths.output, fixturePaths.inputs, {})
       await assertOutput()
@@ -196,6 +200,23 @@ describe('e2e', function () {
         expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
       }
     )
+
+    it.each([
+      { fixtureFolder: path.join('testsuite-merging', '6') },
+      { fixtureFolder: path.join('testsuite-merging', '7') }
+    ])(
+      'merges xml reports with sum time ("$fixtureFolder/file*.xml" -> "$fixtureFolder/expected.xml")',
+      async ({ fixtureFolder }) => {
+        const expectedOutputPath = path.join(__dirname, 'fixtures', fixtureFolder, 'expected.xml')
+        fixturePaths.inputs = [path.join(__dirname, 'fixtures', fixtureFolder, 'file*.xml')]
+        await mergeFiles(fixturePaths.output, fixturePaths.inputs, {
+          sumTime: true
+        })
+        const actualContents = await fsPromises.readFile(fixturePaths.output, { encoding: 'utf8' })
+        const expectedContents = await fsPromises.readFile(expectedOutputPath, { encoding: 'utf8' })
+        expect(create(actualContents).toObject()).toEqual(create(expectedContents).toObject())
+      }
+    )
   })
 
   describe('mergeStreams', function () {
@@ -332,6 +353,25 @@ describe('e2e', function () {
       expect(stdout).toMatch('3 files processed')
       expect(stdout).not.toMatch('Provided input file patterns did not matched any file.')
       await assertOutput()
+    })
+
+    it('merges xml reports with sum time', async () => {
+      const { exec } = await import('node:child_process')
+      const stdout = await new Promise((resolve, reject) => {
+        exec(
+          'node ./cli.js --sum-time ./test/output/actual-combined-1-3.xml "./test/**/m1.xml" "./test/**/m?.xml"',
+          function (error, stdout, stderr) {
+            if (error) {
+              reject(error)
+            } else {
+              resolve(stdout)
+            }
+          }
+        )
+      })
+      expect(stdout).toMatch('3 files processed')
+      expect(stdout).not.toMatch('Provided input file patterns did not matched any file.')
+      await assertOutput({ sumTime: true })
     })
 
     it('provides meaningful message if no input files can be found', async () => {

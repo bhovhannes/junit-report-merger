@@ -1,4 +1,4 @@
-const { KNOWN_ATTRIBUTES } = require('./attributes.js')
+const { KNOWN_ATTRIBUTES, sumAggregator } = require('./attributes.js')
 const { isNumeric } = require('./helpers.js')
 const {
   getNodeAttribute,
@@ -8,13 +8,14 @@ const {
 } = require('./domHelpers.js')
 
 /**
- * @typedef {{}} MergeStringsOptions
+ * @typedef {Object} MergeStringsOptions
+ * @property {boolean} sumTime  Aggregate testsuite time with sum instead of max
  */
 
 /**
  * Merges contents of given XML strings and returns resulting XML string.
  * @param {String[]} srcStrings   Array of strings to merge together.
- * @param {MergeStringsOptions} [options]   Merge options. Currently unused.
+ * @param {MergeStringsOptions} [options]   Merge options.
  * @return {Promise<String>}
  */
 module.exports.mergeToString = async function (srcStrings, options) {
@@ -113,7 +114,10 @@ module.exports.mergeToString = async function (srcStrings, options) {
         for (let attrName of attributeNames) {
           const attrValue = getNodeAttribute(node, attrName)
           if (attrValue !== undefined && isNumeric(attrValue)) {
-            const { aggregator } = KNOWN_ATTRIBUTES[attrName]
+            const aggregator =
+              attrName === 'time' && options?.sumTime === true
+                ? sumAggregator
+                : KNOWN_ATTRIBUTES[attrName].aggregator
             attributes[attrName] = aggregator(attributes[attrName] || 0, attrValue)
           }
         }

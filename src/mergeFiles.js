@@ -13,6 +13,7 @@ const { mergeToString } = require('./mergeToString.js')
  *
  * @typedef {Object} MergeFilesOptions
  * @property {MergeFilesCallback} [onFileMatched]  A callback function which will be called for the each match
+ * @property {boolean} sumTime  Aggregate testsuite time with sum instead of max
  *
  * @callback TMergeFilesCompletionCallback
  * @param {Error} [err]  Error if any
@@ -29,7 +30,7 @@ const { mergeToString } = require('./mergeToString.js')
  * @callback MergeFilesPromiseStyle Reads multiple files, merges their contents and write into the given file.
  * @param {String} destFilePath   Where the output should be stored. Denotes a path to file. If file already exists, it will be overwritten.
  * @param {String[]} srcFilePathsOrGlobPatterns   Paths to the files which should be merged or glob patterns to find them.
- * @param {MergeFilesOptions} [options]   Merge options. Currently unused.
+ * @param {MergeFilesOptions} [options]   Merge options.
  * @return {Promise<void>}
  *
  * @typedef {MergeFilesCallbackStyle & MergeFilesPromiseStyle} MergeFilesFn
@@ -54,7 +55,9 @@ module.exports.mergeFiles = function (destFilePath, srcFilePathsOrGlobPatterns, 
         srcStrings.push(content)
       }
 
-      const mergedContent = await mergeToString(srcStrings, {})
+      const mergedContent = await mergeToString(srcStrings, {
+        sumTime: normalizedOptions?.sumTime ?? false
+      })
       await fs.promises.writeFile(destFilePath, mergedContent, 'utf8')
 
       callback()
