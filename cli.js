@@ -15,16 +15,18 @@ function getProgram() {
       'Example (glob patterns to match input files):\n  jrm ./results/combined.xml "./results/units/*.xml" "./results/e2e/*.xml"'
   )
   program.arguments('<destination> <sources...>')
+  program.option('-t, --sum-time', 'Aggregate testsuite time with sum instead of max', false)
   return program
 }
 
 const program = getProgram()
-program.action(async function (destination, sources) {
+program.action(async function (destination, sources, options) {
   const destFilePath = destination
   const srcFilePathsOrGlobPatterns = sources
 
   let processedFileCount = 0
   await mergeFiles(destFilePath, srcFilePathsOrGlobPatterns, {
+    sumTime: options.sumTime,
     onFileMatched: () => {
       ++processedFileCount
     }

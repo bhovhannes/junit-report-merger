@@ -16,7 +16,7 @@ function maxAggregator(a, b) {
  *
  * Attributes not in this list won't be aggregated.
  */
-module.exports.KNOWN_ATTRIBUTES = {
+const KNOWN_ATTRIBUTES = {
   tests: {
     aggregator: sumAggregator,
     rollup: true
@@ -46,4 +46,10 @@ module.exports.KNOWN_ATTRIBUTES = {
     aggregator: sumAggregator,
     rollup: false
   }
+}
+
+module.exports = {
+  sumAggregator,
+  maxAggregator,
+  KNOWN_ATTRIBUTES
 }
