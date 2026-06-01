@@ -136,13 +136,22 @@ Signature:
 type MergeFilesOptions = {
     onFileMatched? (matchInfo: {
         filePath: string
-    }) => void
+    }) => void;
+
+    sumTime: boolean;
 }
 ```
 
 #### `onFileMatched`
 
 [`mergeFiles`](#mergefiles) calls function specified by the `onFileMatched` option once for each file matched by `srcFilePaths`, right before file processing begins.
+
+#### `sumTime`
+
+When `true`, the `time` attribute of the top-level `testsuites` element will be aggregated using `sum` instead of `max`.
+This sums the run times from all testsuites and represents the time it took to perform all tests, _without_ accounting for parallelization. The actual time it took to perform all tests may be shorter when testsuites ran in parallel.
+
+When `false` (default), the `time` attribute of the top-level `testsuites` element contains the longest time a test testsuite took to run which is probably closer to the real execution time in case all testsuites ran in parallel.
 
 ## mergeStreams
 
@@ -152,25 +161,25 @@ Signature:
 mergeStreams(
     destStream: WritableStream,
     srcStreams: ReadableStream[],
-    options?: {}
-) => Promise<void>
+    options?: MergeStreamsOptions
+) => Promise<void>;
 
 mergeStreams(
     destStream: WritableStream,
     srcStreams: ReadableStream[],
-    options: {},
-    cb: (err?: Error) => void
-) => void
+    options: MergeStreamsOptions,
+    cb: (err?: Error) => void;
+) => void;
 ```
 
 Reads multiple streams, merges their contents and write into the given stream.
 
-| Param      | Type                               | Description                                                                                        |
-| ---------- | ---------------------------------- | -------------------------------------------------------------------------------------------------- |
-| destStream | <code>WritableStream</code>        | A stream which will be used to write the merge result.                                             |
-| srcStreams | <code>ReadableStream[]</code>      | Streams which will be used to read data from.                                                      |
-| [options]  | <code>object</code>                | Merge options. Currently unused.                                                                   |
-| [cb]       | <code>(err?: Error) => void</code> | Callback function which will be called at completion. Will receive error as first argument if any. |
+| Param      | Type                                                     | Description                                                                                        |
+| ---------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| destStream | <code>WritableStream</code>                              | A stream which will be used to write the merge result.                                             |
+| srcStreams | <code>ReadableStream[]</code>                            | Streams which will be used to read data from.                                                      |
+| [options]  | <code>[MergeStreamsOptions](#mergestreamsoptions)</code> | Merge options.                                                                                     |
+| [cb]       | <code>(err?: Error) => void</code>                       | Callback function which will be called at completion. Will receive error as first argument if any. |
 
 Last argument - `cb` is a Node.js style callback function. If callback function is not passed, function will return a promise. That is, all the following variants will work:
 
@@ -188,6 +197,25 @@ await mergeStreams(destStream, srcStreams, {})
 await mergeStreams(destStream, srcStreams)
 ```
 
+### `MergeStreamsOptions`
+
+These are the options accepted by [`mergeStreams`](#mergestreams).
+
+Signature:
+
+```typescript
+type MergeStreamsOptions = {
+  sumTime: boolean
+}
+```
+
+#### `sumTime`
+
+When `true`, the `time` attribute of the top-level `testsuites` element will be aggregated using `sum` instead of `max`.
+This sums the run times from all testsuites and represents the time it took to perform all tests, _without_ accounting for parallelization. The actual time it took to perform all tests may be shorter when testsuites ran in parallel.
+
+When `false` (default), the `time` attribute of the top-level `testsuites` element contains the longest time a test testsuite took to run which is probably closer to the real execution time in case all testsuites ran in parallel.
+
 ## mergeToString
 
 Signature:
@@ -195,16 +223,35 @@ Signature:
 ```typescript
 mergeToString(
     srcStrings: string[],
-    options?: {}
+    options?: MergeToStringOptions
 ) => string
 ```
 
 Merges given XML strings and returns the result.
 
-| Param      | Type                  | Description                         |
-| ---------- | --------------------- | ----------------------------------- |
-| srcStrings | <code>string[]</code> | Array of strings to merge together. |
-| [options]  | <code>object</code>   | Merge options. Currently unused.    |
+| Param      | Type                                                       | Description                         |
+| ---------- | ---------------------------------------------------------- | ----------------------------------- |
+| srcStrings | <code>string[]</code>                                      | Array of strings to merge together. |
+| [options]  | <code>[MergeToStringOptions](#mergetostringoptions)</code> | Merge options.                      |
+
+### `MergeToStringOptions`
+
+These are the options accepted by [`mergeToString`](#mergetostring).
+
+Signature:
+
+```typescript
+type MergeToStringOptions = {
+  sumTime: boolean
+}
+```
+
+#### `sumTime`
+
+When `true`, the `time` attribute of the top-level `testsuites` element will be aggregated using `sum` instead of `max`.
+This sums the run times from all testsuites and represents the time it took to perform all tests, _without_ accounting for parallelization. The actual time it took to perform all tests may be shorter when testsuites ran in parallel.
+
+When `false` (default), the `time` attribute of the top-level `testsuites` element contains the longest time a test testsuite took to run which is probably closer to the real execution time in case all testsuites ran in parallel.
 
 ## JUnit XML Format
 
