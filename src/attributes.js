@@ -1,10 +1,4 @@
-function sumAggregator(a, b) {
-  return Number(a) + Number(b)
-}
-
-function maxAggregator(a, b) {
-  return Math.max(Number(a), Number(b))
-}
+const { sumAggregator, maxAggregator } = require('./aggregators')
 
 /**
  * We use https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd as a reference.
@@ -16,7 +10,7 @@ function maxAggregator(a, b) {
  *
  * Attributes not in this list won't be aggregated.
  */
-const KNOWN_ATTRIBUTES = {
+module.exports.KNOWN_ATTRIBUTES = {
   tests: {
     aggregator: sumAggregator,
     rollup: true
@@ -46,10 +40,4 @@ const KNOWN_ATTRIBUTES = {
     aggregator: sumAggregator,
     rollup: false
   }
-}
-
-module.exports = {
-  sumAggregator,
-  maxAggregator,
-  KNOWN_ATTRIBUTES
 }

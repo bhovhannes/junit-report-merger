@@ -1,4 +1,5 @@
-const { KNOWN_ATTRIBUTES, sumAggregator } = require('./attributes.js')
+const { KNOWN_ATTRIBUTES } = require('./attributes.js')
+const { sumAggregator } = require('./aggregators')
 const { isNumeric } = require('./helpers.js')
 const {
   getNodeAttribute,
