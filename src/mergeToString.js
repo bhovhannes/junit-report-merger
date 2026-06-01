@@ -9,14 +9,14 @@ const {
 } = require('./domHelpers.js')
 
 /**
- * @typedef {Object} MergeStringsOptions
+ * @typedef {Object} MergeToStringOptions
  * @property {boolean} sumTime  Aggregate testsuite time with sum instead of max
  */
 
 /**
  * Merges contents of given XML strings and returns resulting XML string.
  * @param {String[]} srcStrings   Array of strings to merge together.
- * @param {MergeStringsOptions} [options]   Merge options.
+ * @param {MergeToStringOptions} [options]   Merge options.
  * @return {Promise<String>}
  */
 module.exports.mergeToString = async function (srcStrings, options) {
