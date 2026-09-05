@@ -51,10 +51,10 @@
   "devDependencies": {
     "@bhovhannes/shared-config": "0.0.1",
     "@evilmartians/lefthook": "2.1.12",
-    "@vitest/coverage-v8": "^4.0.13",
+    "@vitest/coverage-v8": "^5.0.0",
     "prettier": "3.9.6",
     "typescript": "7.0.2",
-    "vitest": "^4.0.13"
+    "vitest": "^5.0.0"
   },
   "engines": {
     "node": ">=20"
